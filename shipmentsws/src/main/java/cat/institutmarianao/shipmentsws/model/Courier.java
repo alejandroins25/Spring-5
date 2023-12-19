@@ -11,6 +11,6 @@ import lombok.EqualsAndHashCode;
 public class Courier extends User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	private Company company;
 }
