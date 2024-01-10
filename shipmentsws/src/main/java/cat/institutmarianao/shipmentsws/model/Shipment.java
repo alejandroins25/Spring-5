@@ -5,11 +5,22 @@ import java.util.List;
 
 import org.hibernate.annotations.Formula;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
 
+@Entity
 /* Lombok */
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -33,12 +44,17 @@ public class Shipment implements Serializable {
 
 	/* Lombok */
 	@EqualsAndHashCode.Include
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Enumerated(EnumType.STRING)
 	private Category category;
 
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Address sender;
 
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Address recipient;
 
 	private Float weight;
@@ -51,6 +67,7 @@ public class Shipment implements Serializable {
 
 	private String note;
 
+	@OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Action> tracking;
 
 	/* Hibernate */
@@ -61,6 +78,7 @@ public class Shipment implements Serializable {
 			+ " WHERE last_action.shipment_id=a.shipment_id AND last_action.shipment_id=id ))")
 	// Lombok
 	@Setter(AccessLevel.NONE)
+	@Enumerated(EnumType.STRING)
 	private Status status;
 
 }

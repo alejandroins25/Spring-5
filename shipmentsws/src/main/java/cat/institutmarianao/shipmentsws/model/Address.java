@@ -2,9 +2,16 @@ package cat.institutmarianao.shipmentsws.model;
 
 import java.io.Serializable;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+@Entity
 /* Lombok */
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -14,10 +21,15 @@ public class Address implements Serializable {
 
 	/* Lombok */
 	@EqualsAndHashCode.Include
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected Long id;
-
+	
+	@NotBlank
+	@Size(max = 100)
 	private String name;
-
+	
+	@NotBlank
 	private String street;
 	private String number;
 	private String floor;
