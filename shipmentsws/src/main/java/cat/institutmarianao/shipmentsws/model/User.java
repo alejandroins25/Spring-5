@@ -6,6 +6,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -36,14 +39,21 @@ public abstract class User implements Serializable {
 	/* Lombok */
 	@EqualsAndHashCode.Include
 	@Id
+	@Size(min = MIN_USERNAME, max = MAX_USERNAME)
 	protected String username;
 
 	@Enumerated(EnumType.STRING)
 	protected Role role;
-
+	
+	@NotNull
+	@Size(min = MIN_PASSWORD)
 	protected String password;
-
+	
+	@NotBlank
+	@Size(min = MIN_FULL_NAME, max = MAX_FULL_NAME)
 	protected String fullName;
-
+	
+	@NotNull
+	@Size(max = MAX_EXTENSION)
 	protected Integer extension;
 }

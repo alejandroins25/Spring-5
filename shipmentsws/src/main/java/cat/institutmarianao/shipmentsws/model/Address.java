@@ -31,14 +31,19 @@ public class Address implements Serializable {
 	
 	@NotBlank
 	private String street;
+	
+	@NotBlank
 	private String number;
+	@NotBlank
 	private String floor;
+	@NotBlank
 	private String door;
-
+	@NotBlank
 	private String city;
+	@NotBlank
 	private String province;
-
+	@NotBlank
 	private String postalCode;
-
+	@NotBlank
 	private String country;
 }

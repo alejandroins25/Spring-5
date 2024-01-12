@@ -15,6 +15,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -47,24 +49,34 @@ public class Shipment implements Serializable {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Category category;
-
+	
+	@NotNull
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Address sender;
-
+	
+	@NotNull
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Address recipient;
-
+	
+	@NotNull
 	private Float weight;
+	@NotNull
 	private Float height;
+	@NotNull
 	private Float width;
+	@NotNull
 	private Float length;
-
+	
+	@NotNull
 	private Boolean express;
+	@NotNull
 	private Boolean fragile;
-
+	
+	@NotBlank
 	private String note;
 
 	@OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

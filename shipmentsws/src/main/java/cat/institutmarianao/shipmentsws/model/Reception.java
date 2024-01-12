@@ -3,6 +3,7 @@ package cat.institutmarianao.shipmentsws.model;
 import java.io.Serializable;
 
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,6 +14,7 @@ import lombok.EqualsAndHashCode;
 public class Reception extends Action implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
+	
+	@NotNull
 	private Integer trackingNumber;
 }
