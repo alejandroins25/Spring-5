@@ -1,7 +1,10 @@
 package cat.institutmarianao.shipmentsws.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import cat.institutmarianao.shipmentsws.model.Office;
+import cat.institutmarianao.shipmentsws.services.OfficeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,8 +28,11 @@ import jakarta.validation.constraints.Positive;
 @Validated
 public class OfficeController {
 
-//	@Autowired
-//	private OfficeService officeService;
+	@Autowired
+	private OfficeService officeService;
+	
+	@Autowired
+	private ConversionService conversionService;
 
 	@Operation(summary = "Find all offices")
 	@ApiResponse(responseCode = "200", content = {
@@ -33,8 +40,15 @@ public class OfficeController {
 
 	@GetMapping(value = "/find/all")
 	public List<Office> findAll() {
-		// TODO find all offices
-		return null;
+		// find all offices
+		List<Office> offices = officeService.findAll();
+
+		List<Office> officeList = new ArrayList<>(offices.size());
+		for (Office office : offices) {
+			Office officeConverted = conversionService.convert(office, Office.class);
+			officeList.add(officeConverted);
+		}
+		return officeList;
 	}
 
 	@Operation(summary = "Get office by id")
@@ -46,6 +60,6 @@ public class OfficeController {
 	@GetMapping("/get/by/id/{id}")
 	public Office getById(@PathVariable("id") @Positive Long id) {
 		// TODO find an office by id
-		return null;
+		return officeService.getById(id);
 	}
 }

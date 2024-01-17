@@ -2,6 +2,7 @@ package cat.institutmarianao.shipmentsws.model;
 
 import java.io.Serializable;
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -12,6 +13,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 /* Lombok */
 @Data
+@DiscriminatorValue(Action.ASSIGNMENT)
 @EqualsAndHashCode(callSuper = true)
 public class Assignment extends Action implements Serializable {
 
@@ -21,7 +23,7 @@ public class Assignment extends Action implements Serializable {
 	public static final int MAX_PRIORITAT = 3;
 	
 	@ManyToOne
-    @JoinColumn(name = "courier_id")
+    @JoinColumn(name = "courier_username")
 	@NotNull
 	private Courier courier;
 	

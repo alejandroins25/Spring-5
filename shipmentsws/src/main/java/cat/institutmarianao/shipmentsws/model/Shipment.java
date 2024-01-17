@@ -15,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -26,6 +27,8 @@ import lombok.Setter;
 /* Lombok */
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+/*JPA*/
+@Table(name = "shipments")
 public class Shipment implements Serializable {
 
 	private static final long serialVersionUID = 1L;

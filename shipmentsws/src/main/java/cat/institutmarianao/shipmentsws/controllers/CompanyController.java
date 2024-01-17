@@ -1,7 +1,10 @@
 package cat.institutmarianao.shipmentsws.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import cat.institutmarianao.shipmentsws.model.Company;
+import cat.institutmarianao.shipmentsws.services.CompanyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,8 +28,11 @@ import jakarta.validation.constraints.Positive;
 @Validated
 public class CompanyController {
 
-//	@Autowired
-//	private CompanyService companyService;
+	@Autowired
+	private CompanyService companyService;
+	
+	@Autowired
+	private ConversionService conversionService;
 
 	@Operation(summary = "Find all companies")
 	@ApiResponse(responseCode = "200", content = {
@@ -33,8 +40,15 @@ public class CompanyController {
 
 	@GetMapping(value = "/find/all")
 	public List<Company> findAll() {
-		// TODO find all companies
-		return null;
+		// find all companies
+		List<Company> companies = companyService.findAll();
+
+		List<Company> companyList = new ArrayList<>(companies.size());
+		for (Company company : companies) {
+			Company companyConverted = conversionService.convert(company, Company.class);
+			companyList.add(companyConverted);
+		}
+		return companyList;
 	}
 
 	@Operation(summary = "Get company by id")
@@ -45,7 +59,7 @@ public class CompanyController {
 
 	@GetMapping("/get/by/id/{id}")
 	public Company getById(@PathVariable("id") @Positive Long id) {
-		// TODO find a company by its id
-		return null;
+		// find a company by its id
+		return companyService.getById(id);
 	}
 }

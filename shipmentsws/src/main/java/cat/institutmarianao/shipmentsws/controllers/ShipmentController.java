@@ -1,8 +1,11 @@
 package cat.institutmarianao.shipmentsws.controllers;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,10 +18,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import cat.institutmarianao.shipmentsws.ShipmentswsApplication;
+import cat.institutmarianao.shipmentsws.model.Shipment;
+import cat.institutmarianao.shipmentsws.model.User;
 import cat.institutmarianao.shipmentsws.model.Shipment.Category;
 import cat.institutmarianao.shipmentsws.model.Shipment.Status;
 import cat.institutmarianao.shipmentsws.model.dto.ActionDto;
 import cat.institutmarianao.shipmentsws.model.dto.ShipmentDto;
+import cat.institutmarianao.shipmentsws.model.dto.UserDto;
+import cat.institutmarianao.shipmentsws.services.ShipmentService;
+import cat.institutmarianao.shipmentsws.services.UserService;
 import cat.institutmarianao.shipmentsws.validation.groups.OnActionCreate;
 import cat.institutmarianao.shipmentsws.validation.groups.OnShipmentCreate;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,17 +47,17 @@ import jakarta.validation.constraints.Positive;
 @Validated
 public class ShipmentController {
 
-//	@Autowired
-//	private UserService userService;
-//
-//	@Autowired
-//	private ShipmentService shipmentService;
-//
-//	@Autowired
-//	private ActionService actionService;
-//
-//	@Autowired
-//	private ConversionService conversionService;
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private ShipmentService shipmentService;
+
+	@Autowired
+	private ActionService actionService;
+
+	@Autowired
+	private ConversionService conversionService;
 
 	/* Swagger */
 	@Operation(summary = "Find all shipments")
@@ -65,7 +73,15 @@ public class ShipmentController {
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = ShipmentswsApplication.DATE_PATTERN) @Parameter(description = ShipmentswsApplication.DATE_PATTERN) Date to) {
 
 		// TODO find all shipments
-		return null;
+		
+		List<Shipment> shipments = shipmentService.findAll(status, receivedBy, courierAssigned, category, from, to);
+
+		List<ShipmentDto> shipmentsDto = new ArrayList<>(shipments.size());
+		for (Shipment shipment : shipments) {
+			ShipmentDto shipmentDto = conversionService.convert(shipment, ShipmentDto.class);
+			shipmentsDto.add(shipmentDto);
+		}
+		return shipmentsDto;
 	}
 
 	/* Swagger */
@@ -81,7 +97,14 @@ public class ShipmentController {
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = ShipmentswsApplication.DATE_PATTERN) @Parameter(description = ShipmentswsApplication.DATE_PATTERN) Date to) {
 
 		// TODO find all pending shipments (shipments with only receptions)
-		return null;
+		List<Shipment> shipments = shipmentService.findAllPending( receivedBy, courierAssigned, category, from, to);
+		
+		List<ShipmentDto> shipmentsDto = new ArrayList<>(shipments.size());
+		for (Shipment shipment : shipments) {
+			ShipmentDto shipmentDto = conversionService.convert(shipment, ShipmentDto.class);
+			shipmentsDto.add(shipmentDto);
+		}
+		return shipmentsDto;
 	}
 
 	/* Swagger */
@@ -95,10 +118,18 @@ public class ShipmentController {
 			@RequestParam(value = "category", required = false) Category category,
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = ShipmentswsApplication.DATE_PATTERN) @Parameter(description = ShipmentswsApplication.DATE_PATTERN) Date from,
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = ShipmentswsApplication.DATE_PATTERN) @Parameter(description = ShipmentswsApplication.DATE_PATTERN) Date to) {
-
+		
 		// TODO find all shipments in process (shipments with assignment or
 		// interventions)
-		return null;
+		
+		List<Shipment> shipments = shipmentService.findAllInProcess( receivedBy, courierAssigned, category, from, to);
+		
+		List<ShipmentDto> shipmentsDto = new ArrayList<>(shipments.size());
+		for (Shipment shipment : shipments) {
+			ShipmentDto shipmentDto = conversionService.convert(shipment, ShipmentDto.class);
+			shipmentsDto.add(shipmentDto);
+		}
+		return shipmentsDto;
 	}
 
 	/* Swagger */
@@ -111,7 +142,8 @@ public class ShipmentController {
 	@GetMapping("/get/by/id/{shipmentId}")
 	public ShipmentDto findById(@PathVariable("shipmentId") @Positive Long shipmentId) {
 		// TODO find a shipment by its id
-		return null;
+		Shipment opShipment = shipmentService.getById(shipmentId);
+		return conversionService.convert(opShipment, ShipmentDto.class);
 	}
 
 	/* Swagger */

@@ -3,6 +3,9 @@ package cat.institutmarianao.shipmentsws.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +14,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
@@ -18,8 +22,11 @@ import lombok.EqualsAndHashCode;
 @Entity
 /* Lombok */
 @Data
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+/*JPA*/
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="type", discriminatorType=DiscriminatorType.STRING)
+@Table(name = "actions")
 public abstract class Action implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -40,10 +47,11 @@ public abstract class Action implements Serializable {
 	protected Long id;
 	
 	@NotNull
+	@Column(insertable=false, updatable=false)
 	protected Type type;
 
 	@ManyToOne
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "performer_username")
 	@NotNull
 	protected User performer;
 	

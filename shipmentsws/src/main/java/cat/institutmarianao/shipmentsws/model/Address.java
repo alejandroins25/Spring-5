@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -15,6 +16,7 @@ import lombok.EqualsAndHashCode;
 /* Lombok */
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Table(name = "addresses")
 public class Address implements Serializable {
 
 	private static final long serialVersionUID = 1L;
