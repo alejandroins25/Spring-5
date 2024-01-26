@@ -7,6 +7,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -47,6 +49,7 @@ public abstract class Action implements Serializable {
 	protected Long id;
 	
 	@NotNull
+	@Enumerated(EnumType.STRING)
 	@Column(insertable=false, updatable=false)
 	protected Type type;
 

@@ -18,15 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import cat.institutmarianao.shipmentsws.ShipmentswsApplication;
+import cat.institutmarianao.shipmentsws.model.Action;
 import cat.institutmarianao.shipmentsws.model.Shipment;
-import cat.institutmarianao.shipmentsws.model.User;
 import cat.institutmarianao.shipmentsws.model.Shipment.Category;
 import cat.institutmarianao.shipmentsws.model.Shipment.Status;
 import cat.institutmarianao.shipmentsws.model.dto.ActionDto;
 import cat.institutmarianao.shipmentsws.model.dto.ShipmentDto;
-import cat.institutmarianao.shipmentsws.model.dto.UserDto;
+import cat.institutmarianao.shipmentsws.services.ActionService;
 import cat.institutmarianao.shipmentsws.services.ShipmentService;
-import cat.institutmarianao.shipmentsws.services.UserService;
 import cat.institutmarianao.shipmentsws.validation.groups.OnActionCreate;
 import cat.institutmarianao.shipmentsws.validation.groups.OnShipmentCreate;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,9 +45,6 @@ import jakarta.validation.constraints.Positive;
 @RequestMapping("/shipments")
 @Validated
 public class ShipmentController {
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private ShipmentService shipmentService;
@@ -72,9 +68,9 @@ public class ShipmentController {
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = ShipmentswsApplication.DATE_PATTERN) @Parameter(description = ShipmentswsApplication.DATE_PATTERN) Date from,
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = ShipmentswsApplication.DATE_PATTERN) @Parameter(description = ShipmentswsApplication.DATE_PATTERN) Date to) {
 
-		// TODO find all shipments
+		// find all shipments
 		
-		List<Shipment> shipments = shipmentService.findAll(status, receivedBy, courierAssigned, category, from, to);
+		List<Shipment> shipments = shipmentService.findAll();
 
 		List<ShipmentDto> shipmentsDto = new ArrayList<>(shipments.size());
 		for (Shipment shipment : shipments) {
@@ -96,15 +92,8 @@ public class ShipmentController {
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = ShipmentswsApplication.DATE_PATTERN) @Parameter(description = ShipmentswsApplication.DATE_PATTERN) Date from,
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = ShipmentswsApplication.DATE_PATTERN) @Parameter(description = ShipmentswsApplication.DATE_PATTERN) Date to) {
 
-		// TODO find all pending shipments (shipments with only receptions)
-		List<Shipment> shipments = shipmentService.findAllPending( receivedBy, courierAssigned, category, from, to);
 		
-		List<ShipmentDto> shipmentsDto = new ArrayList<>(shipments.size());
-		for (Shipment shipment : shipments) {
-			ShipmentDto shipmentDto = conversionService.convert(shipment, ShipmentDto.class);
-			shipmentsDto.add(shipmentDto);
-		}
-		return shipmentsDto;
+		return findAll(Status.PENDING, receivedBy, courierAssigned, category, from, to);
 	}
 
 	/* Swagger */
@@ -119,17 +108,7 @@ public class ShipmentController {
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = ShipmentswsApplication.DATE_PATTERN) @Parameter(description = ShipmentswsApplication.DATE_PATTERN) Date from,
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = ShipmentswsApplication.DATE_PATTERN) @Parameter(description = ShipmentswsApplication.DATE_PATTERN) Date to) {
 		
-		// TODO find all shipments in process (shipments with assignment or
-		// interventions)
-		
-		List<Shipment> shipments = shipmentService.findAllInProcess( receivedBy, courierAssigned, category, from, to);
-		
-		List<ShipmentDto> shipmentsDto = new ArrayList<>(shipments.size());
-		for (Shipment shipment : shipments) {
-			ShipmentDto shipmentDto = conversionService.convert(shipment, ShipmentDto.class);
-			shipmentsDto.add(shipmentDto);
-		}
-		return shipmentsDto;
+		return findAll(Status.IN_PROCESS, receivedBy, courierAssigned, category, from, to);
 	}
 
 	/* Swagger */
@@ -141,9 +120,9 @@ public class ShipmentController {
 	/**/
 	@GetMapping("/get/by/id/{shipmentId}")
 	public ShipmentDto findById(@PathVariable("shipmentId") @Positive Long shipmentId) {
-		// TODO find a shipment by its id
-		Shipment opShipment = shipmentService.getById(shipmentId);
-		return conversionService.convert(opShipment, ShipmentDto.class);
+		// find a shipment by its id
+		Shipment shipment = shipmentService.getById(shipmentId);
+		return conversionService.convert(shipment, ShipmentDto.class);
 	}
 
 	/* Swagger */
@@ -154,8 +133,14 @@ public class ShipmentController {
 	@GetMapping("/find/tracking/by/id/{shipmentId}")
 	public List<ActionDto> findTrackingByShipmentId(@PathVariable("shipmentId") @Positive Long shipmentId) {
 
-		// TODO find all actions of a shipment
-		return null;
+		// find all actions of a shipment --> Hay que hacer el actionService
+		List<Action> actions = actionService.findActionsByShipmentId(shipmentId);
+		
+		List<ActionDto> actionsDto = new ArrayList<>(actions.size());
+		for (Action action : actions) {
+			actionsDto.add(conversionService.convert(action, ActionDto.class));
+		}
+		return actionsDto;
 	}
 
 	/* Swagger */
@@ -169,7 +154,8 @@ public class ShipmentController {
 			@Parameter(schema = @Schema(implementation = ShipmentDto.class)) @RequestBody @Valid ShipmentDto shipmentDto) {
 
 		// TODO save a shipment (with its reception action)
-		return null;
+		Shipment shipment = conversionService.convert(shipmentDto, Shipment.class);
+	    return shipmentDto;
 	}
 
 	/* Swagger */
@@ -183,7 +169,8 @@ public class ShipmentController {
 			@Parameter(schema = @Schema(implementation = ActionDto.class)) @RequestBody @Valid ActionDto actionDto) {
 
 		// TODO save an action (assignment or delivery) of the shipment
-		return null;
+		Action action = conversionService.convert(actionDto, Action.class);
+		return actionDto;
 	}
 
 	/* Swagger */
@@ -195,5 +182,6 @@ public class ShipmentController {
 	public void deleteById(@PathVariable("shipment_id") @Positive Long shipmentId) {
 
 		// TODO delete a shipment by its id
+		shipmentService.deleteShipmentById(shipmentId);
 	}
 }
