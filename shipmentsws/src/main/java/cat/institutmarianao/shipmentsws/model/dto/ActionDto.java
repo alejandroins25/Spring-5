@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import cat.institutmarianao.shipmentsws.ShipmentswsApplication;
 import cat.institutmarianao.shipmentsws.model.Action;
@@ -16,6 +18,12 @@ import lombok.EqualsAndHashCode;
 /* Lombok */
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = ReceptionDto.class, name = "RECEPTION"),
+        @JsonSubTypes.Type(value = AssignmentDto.class, name = "ASSIGNMENT"),
+        @JsonSubTypes.Type(value = DeliveryDto.class, name = "DELIVERY")
+})
 public abstract class ActionDto implements Serializable {
 
 	private static final long serialVersionUID = 1L;

@@ -3,6 +3,9 @@ package cat.institutmarianao.shipmentsws.model.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import cat.institutmarianao.shipmentsws.ShipmentswsApplication;
 import cat.institutmarianao.shipmentsws.model.Address;
 import cat.institutmarianao.shipmentsws.model.Shipment;
 import lombok.Data;
@@ -26,6 +29,8 @@ public class ShipmentDto implements Serializable {
 	protected Integer priority;
 
 	protected String courier;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ShipmentswsApplication.DATE_PATTERN)
 	protected Date receptionDate = new Date();
 
 	private Shipment.Category category;

@@ -3,6 +3,7 @@ package cat.institutmarianao.shipmentsws.model.dto;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import cat.institutmarianao.shipmentsws.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,7 +27,8 @@ public abstract class UserDto implements Serializable {
 	
 	@JsonIgnore
 	protected String password;
-
+	
+	@JsonProperty("full_name")
 	protected String fullName;
 
 	protected Integer extension;

@@ -2,6 +2,8 @@ package cat.institutmarianao.shipmentsws.model.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -16,7 +18,8 @@ public class AssignmentDto extends ActionDto implements Serializable {
 	public static final int MAX_PRIORITAT = 9;
 
 	private String courier;
-
+	
+	@JsonProperty("prioridad")
 	private Integer priority;
 
 }
